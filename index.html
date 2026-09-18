@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Invitación Boda - Katya & Misael</title>
+    <link rel="preload" as="image" href="backgroud-white-v2.jpeg" fetchpriority="high">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Great+Vibes&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a1a1a;
+            overflow: hidden;
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Contenedor estricto para dispositivos móviles */
+        .mobile-frame {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            max-width: 430px;
+            max-height: 932px;
+            overflow: hidden;
+            box-shadow: 0 0 25px rgba(0,0,0,0.6);
+            background-color: #fcf8f5;
+        }
+
+        /* Video Overlay con ajuste responsivo */
+        #video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1s ease;
+        }
+
+        #intro-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Botón para omitir intro */
+        .skip-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            z-index: 1001;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Contenedor principal ajustado con etiqueta img para evitar recortes */
+        .container {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #4a4a4a;
+            padding: 20px;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animación de desvanecimiento secuencial */
+        .fade-in {
+            opacity: 0;
+        }
+
+        .container.animate-text #te-invitamos {
+            animation: fadeInWord 1.5s ease-in forwards;
+            animation-delay: 0.2s;
+        }
+
+        .container.animate-text #nuestra-boda {
+            animation: fadeInWord 1.5s ease-in forwards;
+            animation-delay: 1.2s;
+        }
+
+        .container.animate-text .names {
+            animation: fadeInWord 1.5s ease-in forwards;
+            animation-delay: 2.2s;
+        }
+
+        #te-invitamos {
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        #nuestra-boda {
+            font-size: clamp(1.6rem, 7vw, 1.9rem);
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .names {
+            font-size: clamp(2.2rem, 9vw, 2.8rem);
+            line-height: 2.2;
+            font-family: 'Great Vibes', cursive;
+            width: 100%;
+        }
+
+        .names span {
+            display: block;
+        }
+
+        @keyframes fadeInWord {
+            to { opacity: 1; }
+        }
+
+        #countdown-container {
+            top: 35px;
+            z-index: 3;
+            display: flex;
+            gap: 12px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 1s ease;
+        }
+
+        .container.animate-text #countdown-container {
+            transform: translateY(0);
+            animation: fadeInWord 1.5s ease-in forwards;
+            animation-delay: 3.2s;
+        }
+
+        .countdown-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 6px 10px;
+            border-radius: 8px;
+            min-width: 45px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .countdown-number {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #4a4a4a;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .countdown-label {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #777;
+            margin-top: 2px;
+        }
+
+        /* Estilos para el botón de Ver Invitación */
+        .cta-button-container {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            padding: 0 25px;
+            z-index: 3;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease;
+        }
+
+        .container.animate-text .cta-button-container {
+            transform: translateY(0);
+            animation: fadeInWord 1.5s ease-in forwards;
+            animation-delay: 3.8s;
+        }
+
+        .btn-ver-invitacion {
+            display: block;
+            width: 100%;
+            background-color: #4a4a4a;
+            color: #ffffff;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            padding: 14px 0;
+            border-radius: 25px;
+            text-align: center;
+            text-decoration: none;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-ver-invitacion:hover {
+            background-color: #333333;
+            transform: scale(1.02);
+        }
+
+        /* Contenedor de la lista de invitación ajustado al fondo */
+        #invitation-list {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fcf8f5;
+            z-index: 10;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 30px 15px;
+            overflow: hidden; /* Evita scroll general del body, el scroll lo maneja el inner */
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            color: #4a4a4a;
+        }
+
+        #invitation-list.active {
+            display: flex;
+            animation: fadeInWord 0.8s ease-in forwards;
+        }
+
+        /* Contenido interno con scroll fluido y sin generar espacios extra */
+        .invitation-content-inner {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 350px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            padding: 10px 5px 40px 5px; /* Padding inferior generoso para el último botón */
+            scrollbar-width: thin;
+            scrollbar-color: rgba(212, 175, 55, 0.4) transparent;
+        }
+
+        .invitation-content-inner::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .invitation-content-inner::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .invitation-content-inner::-webkit-scrollbar-thumb {
+            background-color: rgba(212, 175, 55, 0.4);
+            border-radius: 10px;
+        }
+
+        .invitation-header-family {
+            font-size: 1.4rem;
+            color: #2c2c2c;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .invitation-instruction {
+            font-size: 0.9rem;
+            font-style: italic;
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        /* Lista de invitados con checkboxes */
+        .guests-container {
+            width: 100%;
+            max-width: 350px;
+            background: #fcf8f5;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid #eedfc1;
+            text-align: left;
+        }
+
+        .guest-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f2f2f2;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .guest-item:last-child {
+            border-bottom: none;
+        }
+
+        .guest-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #c94c4c;
+            cursor: pointer;
+        }
+
+        /* Mensaje elegante informativo */
+        .invitation-note {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #3b3b3b;
+            background-color: rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            padding: 15px 18px;
+            border-radius: 10px;
+            max-width: 350px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(238, 223, 193, 0.6);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            text-align: center;
+        }
+
+        /* Botón de Guardar Cambios */
+        .btn-save {
+            width: 100%;
+            max-width: 350px;
+            background-color: #4a4a4a;
+            color: #ffffff;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            padding: 12px 0;
+            border-radius: 25px;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+            margin-bottom: 12px;
+        }
+
+        .btn-save:hover {
+            background-color: #333;
+        }
+
+        /* Botón secundario para la aportación / lluvia de sobres */
+        .btn-gift {
+            display: block;
+            width: 100%;
+            max-width: 350px;
+            background-color: rgba(255, 255, 255, 0.85);
+            color: #6b533d;
+            border: 1px solid rgba(212, 175, 55, 0.6);
+            padding: 10px 0;
+            border-radius: 25px;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gift:hover {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #4a4a4a;
+            border-color: #d4af37;
+        }
+
+        /* Contenedor de agradecimiento */
+        #thankyou-screen {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fcf8f5;
+            z-index: 20;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 30px 15px;
+            overflow: hidden;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            color: #4a4a4a;
+        }
+
+        #thankyou-screen.active {
+            display: flex;
+            animation: fadeInWord 0.8s ease-in forwards;
+        }
+
+        .thankyou-content-inner {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 350px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            padding: 20px 5px 40px 5px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(212, 175, 55, 0.4) transparent;
+        }
+
+        .thankyou-content-inner::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .thankyou-content-inner::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .thankyou-content-inner::-webkit-scrollbar-thumb {
+            background-color: rgba(212, 175, 55, 0.4);
+            border-radius: 10px;
+        }
+
+        .thankyou-title {
+            font-size: 1.5rem;
+            color: #2c2c2c;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            font-style: italic;
+        }
+
+        .thankyou-message {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(6px);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(238, 223, 193, 0.6);
+        }
+
+        .confirmed-names-list {
+            font-weight: bold;
+            color: #3b3b3b;
+        }
+
+        /* Contenedor del Código QR */
+        .qr-container {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border: 1px solid #eedfc1;
+            margin-bottom: 25px;
+            display: inline-block;
+        }
+
+        .qr-container img {
+            width: 140px;
+            height: 140px;
+            display: block;
+        }
+
+        /* Contenedor del mapa de ubicación */
+        .map-section-container {
+            width: 100%;
+            max-width: 350px;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(238, 223, 193, 0.6);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .map-title {
+            font-size: 0.9rem;
+            color: #4a4a4a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .map-wrapper {
+            width: 100%;
+            height: 140px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .map-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Estilo para la fecha de la boda */
+        .wedding-date {
+            font-size: clamp(0.85rem, 3.5vw, 1rem);
+            letter-spacing: 3px;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 1s ease;
+        }
+
+        .container.animate-text .wedding-date {
+            transform: translateY(0);
+            animation: fadeInWord 1.5s ease-in forwards;
+            animation-delay: 2.8s; /* Aparece antes de la cuenta regresiva */
+        }
+
+        .countdown-title {
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 1s ease;
+        }
+
+        .container.animate-text .countdown-title {
+            transform: translateY(0);
+            animation: fadeInWord 1.5s ease-in forwards;
+            animation-delay: 3.0s; /* Aparece justo antes de los números */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-frame">
+        <div id="video-overlay">
+            <video id="intro-video" autoplay playsinline muted>
+                <source src="v2-background-video.mp4" type="video/mp4">
+                Tu navegador no soporta videos HTML5.
+            </video>
+            <button class="skip-btn" onclick="showInvitation()">Omitir intro</button>
+        </div>
+
+        <div class="container" id="mainContainer">
+            <img src="backgroud-white-v2.jpeg" alt="Background" class="bg-image" fetchpriority="high">
+            <div class="content">
+                <div id="te-invitamos" class="fade-in">Te invitamos a:</div>
+                <div id="nuestra-boda" class="fade-in">Nuestra Boda</div>
+                <div class="names fade-in">
+                    <span>Katya Cabrera Islas</span>
+                    <span style="font-size: clamp(1.2rem, 5vw, 1.5rem); font-family: 'Playfair Display';">&</span>
+                    <span>Misael Garay Rodriguez</span>
+                </div>
+                <div class="wedding-date">09 · 10 · 2026</div>
+                <div class="countdown-title">Faltan</div>
+                <div id="countdown-container">
+                    <div class="countdown-box">
+                        <span class="countdown-number" id="days">00</span>
+                        <span class="countdown-label">Días</span>
+                    </div>
+                    <div class="countdown-box">
+                        <span class="countdown-number" id="hours">00</span>
+                        <span class="countdown-label">Horas</span>
+                    </div>
+                    <div class="countdown-box">
+                        <span class="countdown-number" id="minutes">00</span>
+                        <span class="countdown-label">Min</span>
+                    </div>
+                    <div class="countdown-box">
+                        <span class="countdown-number" id="seconds">00</span>
+                        <span class="countdown-label">Seg</span>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-button-container">
+                <a href="javascript:void(0);" onclick="validateInvitation()" class="btn-ver-invitacion">Ver Invitación</a>
+            </div>
+        </div>
+
+        <div id="invitation-list">
+            <img src="backgroud-white-v2.jpeg" alt="Background" class="bg-image" fetchpriority="high">
+            
+            <div class="invitation-content-inner">
+                <h2 class="invitation-header-family">Familia Islas</h2>
+                <p class="invitation-instruction">Selecciona con gentileza a los integrantes que nos acompañarán</p>
+
+                <div class="guests-container">
+                    <label class="guest-item">
+                        <input type="checkbox" checked> Rocío Islas Olvera
+                    </label>
+                    <label class="guest-item">
+                        <input type="checkbox" checked> Yareth Nahomi Tovar Islas
+                    </label>
+                </div>
+
+                <p class="invitation-note">
+                    Cada detalle ha sido preparado pensando en nuestros seres más entrañables. 
+                    Agradecemos confirmarnos su asistencia con anticipación, lo cual nos permitirá cuidar 
+                    con esmero cada sorbo, plato y lugar en su honor.
+                </p>
+
+                <div class="map-section-container">
+                    <div class="map-title">Ubicación del Evento</div>
+                    <div class="map-wrapper">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6033.614733171597!2d-100.37671411187127!3d20.661673079434138!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d35b028a1c15a5%3A0x1b96fc63420edcb5!2sSal%C3%B3n%2027%20-%20Veintisiete%2027%20Sal%C3%B3n%20de%20Eventos!5e1!3m2!1ses!2smx!4v1788335059849!5m2!1ses!2smx" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    </div>
+                </div>
+
+                <button class="btn-save" onclick="saveAttendance()">Guardar cambios</button>
+                
+                <button class="btn-gift" onclick="alert('Lluvia de sobres: Agradecemos de corazón su detalle y apoyo para nuestra nueva etapa.')">¿Nos quieres regalar algo?</button>
+            </div>
+        </div>
+
+        <div id="thankyou-screen">
+            <img src="backgroud-white-v2.jpeg" alt="Background" class="bg-image" fetchpriority="high">
+            
+            <div class="thankyou-content-inner">
+                <h2 class="thankyou-title">¡Muchas Gracias!</h2>
+                
+                <div class="thankyou-message">
+                    Hemos registrado con éxito tu asistencia para:<br>
+                    <span id="confirmed-guests-list" class="confirmed-names-list"></span>
+                </div>
+
+                <div class="qr-container">
+                    <img id="qr-code-img" src="" alt="Código QR de Acceso">
+                </div>
+                <p style="font-size: 0.75rem; color: #777; margin-bottom: 20px;">Presenta este código QR en la entrada del evento.</p>
+
+                <button class="btn-gift" onclick="alert('Lluvia de sobres: Agradecemos de corazón su detalle y apoyo para nuestra nueva etapa.')">¿Nos quieres regalar algo?</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('intro-video');
+        const videoOverlay = document.getElementById('video-overlay');
+        const mainContainer = document.getElementById('mainContainer');
+        const countdownContainer = document.getElementById('countdown-container');
+
+        function showInvitation() {
+            videoOverlay.style.opacity = '0';
+            setTimeout(() => {
+                videoOverlay.style.display = 'none';
+                mainContainer.classList.add('animate-text');
+                countdownContainer.classList.add('animate-text');
+            }, 1000); 
+        }
+
+        video.addEventListener('ended', showInvitation);
+
+        video.play().catch(error => {
+            console.log("Autoplay bloqueado o requiere interacción:", error);
+        });
+
+        function updateCountdown() {
+            const weddingDate = new Date('2026-10-09T00:00:00').getTime();
+            const now = new Date().getTime();
+            const gap = weddingDate - now;
+
+            if (gap < 0) return;
+
+            const second = 1000;
+            const minute = second * 60;
+            const hour = minute * 60;
+            const day = hour * 24;
+
+            const d = Math.floor(gap / day);
+            const h = Math.floor((gap % day) / hour);
+            const m = Math.floor((gap % hour) / minute);
+            const s = Math.floor((gap % minute) / second);
+
+            document.getElementById('days').innerText = String(d).padStart(2, '0');
+            document.getElementById('hours').innerText = String(h).padStart(2, '0');
+            document.getElementById('minutes').innerText = String(m).padStart(2, '0');
+            document.getElementById('seconds').innerText = String(s).padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+
+        function validateInvitation() {
+            const mainContainer = document.getElementById('mainContainer');
+            mainContainer.style.opacity = '0';
+            mainContainer.style.transition = 'opacity 0.5s ease';
+
+            setTimeout(() => {
+                mainContainer.style.display = 'none';
+                const invitationList = document.getElementById('invitation-list');
+                invitationList.classList.add('active');
+            }, 500);
+        }
+
+        function loadFamilyFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const familyName = urlParams.get('name');
+            const guestsList = urlParams.get('list');
+
+            if (familyName) {
+                const headerFamily = document.querySelector('.invitation-header-family');
+                if (headerFamily) {
+                    headerFamily.innerText = familyName;
+                }
+            }
+
+            if (guestsList) {
+                const guestsContainer = document.querySelector('.guests-container');
+                if (guestsContainer) {
+                    guestsContainer.innerHTML = '';
+                    const guestsArray = guestsList.split(',');
+
+                    const scriptURL = `https://script.google.com/macros/s/AKfycbzduhAo0GPmytT58yvyXNcHri4RkiFEZdluYOuEyPYLkKjWsFDBblt3k1bBxgcbrpeR/exec?familyName=${encodeURIComponent(familyName.toUpperCase())}`;
+
+                    fetch(scriptURL)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Datos obtenidos del servidor:", data);
+
+                        const guestLookup = data.data.reduce((acc, curr) => {
+                            acc[curr.name] = curr.confirmed;
+                            return acc;
+                        }, {});
+
+                        guestsArray.forEach(guestName => {
+                            const trimmedName = guestName.trim();
+                            if (trimmedName) {
+                                const label = document.createElement('label');
+                                label.className = 'guest-item';
+
+                                const input = document.createElement('input');
+                                input.type = 'checkbox';
+                                if (guestLookup[trimmedName]) {
+                                    input.checked = guestLookup[trimmedName] === 'Confirmado';
+                                } else {
+                                    input.checked = false;
+                                }
+                                input.setAttribute('quantity', '1');
+                                label.appendChild(input);
+                                label.appendChild(document.createTextNode(' ' + trimmedName));
+                                guestsContainer.appendChild(label);
+                            }
+                        });
+                    }).catch(error => {
+                        console.error('Error al enviar:', error);
+                    });
+
+                    
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadFamilyFromURL);
+
+        function saveAttendance() {
+            const checkboxes = document.querySelectorAll('.guests-container input[type="checkbox"]');
+            const selectedGuests = [];
+
+            checkboxes.forEach(cb => {
+                const status = cb.checked ? 'Confirmado' : 'No Confirmado';
+                const name = cb.parentNode.textContent.trim();
+                const totalCount =  cb.getAttribute("quantity");
+                selectedGuests.push({
+                    status,
+                    name,
+                    totalCount
+                });
+            });
+
+            const familyName = document.querySelector('.invitation-header-family').innerText;
+            const payload = {
+                familyName: familyName.toUpperCase(),
+                guests: selectedGuests
+            };
+
+            // 3. URL de tu Google Apps Script (¡Pega aquí la URL que copiaste en el Paso 3!)
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxb3KzUUBzCpjRcJE4n-81q-Cd5d4WRIVIY6UkGcVzq9YBe6urQi51m-LCmyc3oVbk/exec';
+
+            console.log("Payload de confirmacion", payload);
+
+            // 4. Enviar los datos a Google Sheets en segundo plano
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors', // Necesario para evitar bloqueos de navegador con Apps Script
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                console.log('Confirmación enviada con éxito a Google Sheets');
+            }).catch(error => {
+                console.error('Error al enviar:', error);
+            });
+
+            // 5. Mostrar los nombres en la pantalla de agradecimiento visual
+            document.getElementById('confirmed-guests-list').innerText = selectedGuests.map(guest => guest.name).join(', ');
+
+            // 6. Generar el código QR dinámicamente
+            const qrText = encodeURIComponent("Boda Katya & Misael - Familia: " + familyName + " - Asistentes: " + selectedGuests.join(', '));
+            const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${qrText}`;
+            document.getElementById('qr-code-img').src = qrImageUrl;
+
+            // 7. Transicionar de la lista de invitados a la pantalla de agradecimiento
+            const invitationList = document.getElementById('invitation-list');
+            invitationList.style.opacity = '0';
+            invitationList.style.transition = 'opacity 0.5s ease';
+
+            setTimeout(() => {
+                invitationList.style.display = 'none';
+                document.getElementById('thankyou-screen').classList.add('active');
+            }, 500);
+        }
+    </script>
+</body>
+</html>
